@@ -158,4 +158,5 @@ Copyright © | All rights reserved
 
 ---
 
-Built with ❤️ to bring AI-powered art to your screens.
+
+Built with ❤️ to bring AI-powered art to your screens!
