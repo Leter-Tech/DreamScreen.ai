@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DreamScreen.ai - Create your perfect wallpaper</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --color-blob-1: #8A2BE2; 
+            --color-blob-2: #DA70D6; 
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0a0a10; 
+            overflow-x: hidden;
+            position: relative;
+            color: #ffffff;
+        }
+
+        .blob-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            filter: blur(120px);
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.2;
+        }
+
+        .blob-1 {
+            width: 500px;
+            height: 500px;
+            background: var(--color-blob-1);
+            top: -150px;
+            left: -150px;
+            animation: move-blob-1 25s infinite alternate ease-in-out;
+        }
+
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--color-blob-2);
+            bottom: -100px;
+            right: -100px;
+            animation: move-blob-2 30s infinite alternate ease-in-out;
+        }
+
+        @keyframes move-blob-1 {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(30vw, 20vh) scale(1.3); }
+        }
+        @keyframes move-blob-2 {
+            from { transform: translate(0, 0) scale(1.2); }
+            to { transform: translate(-20vw, -15vh) scale(0.9); }
+        }
+
+        .glass-ui {
+            background: rgba(15, 15, 26, 0.6); 
+            backdrop-filter: blur(30px); 
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.3); 
+            transition: all 0.3s ease;
+        }
+
+        .glass-input {
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.08);
+            outline: none;
+            
+            box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.5); 
+            border-color: rgba(138, 43, 226, 0.7);
+        }
+        .glass-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        
+        select.glass-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.7rem center;
+            background-repeat: no-repeat;
+            background-size: 1.2em 1.2em;
+            padding-right: 2.8rem;
+        }
+        
+        textarea.glass-input {
+            background-image: none;
+            padding-right: 16px;
+        }
+        
+        .glass-input option {
+            background: #222; 
+            color: white;
+        }
+
+        
+        .style-tabs-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .style-tab input[type="radio"] {
+            display: none; 
+        }
+        .style-tab label {
+            display: block;
+            padding: 8px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .style-tab label:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        .style-tab input:checked + label {
+            background: rgba(255, 255, 255, 0.9);
+            color: #0a0a10;
+            border-color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+        }
+        
+        
+        .btn-primary {
+            background: linear-gradient(90deg, var(--color-blob-1) 0%, var(--color-blob-2) 100%);
+            border: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1.05rem;
+            padding: 16px 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.2); 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-primary:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 25px -5px rgba(138, 43, 226, 0.4), 0 5px 15px -5px rgba(218, 112, 214, 0.3);
+        }
+        .btn-primary:disabled {
+            background: rgba(255, 255, 255, 0.1); 
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid;
+            border-image-slice: 1;
+            border-image-source: linear-gradient(90deg, var(--color-blob-1), var(--color-blob-2));
+            color: var(--color-blob-2);
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(90deg, rgba(138, 43, 226, 0.1), rgba(218, 112, 214, 0.1));
+            color: white;
+            box-shadow: 0 0 15px rgba(218, 112, 214, 0.2);
+        }
+        .btn-secondary i {
+            margin-right: 6px;
+        }
+
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .auth-tab.active {
+            color: white;
+            border-bottom-color: var(--color-blob-2);
+        }
+        
+        .btn-google {
+            background: rgba(255, 255, 255, 0.9);
+            color: #111;
+            border: none;
+        }
+        .btn-google:hover {
+            background: white;
+            transform: scale(1.03);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+        }
+        .btn-google img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .auth-link {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+            transition: color 0.3s ease;
+        }
+        .auth-link:hover {
+            color: white;
+        }
+
+        
+        #user-profile {
+            position: absolute; 
+            top: 1.5rem; 
+            left: 1.5rem; 
+            z-index: 100; 
+            cursor: pointer;
+            margin-bottom: 50px !important;
+        }
+        #user-profile-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-blob-1) 0%, var(--color-blob-2) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+        #user-profile:hover #user-profile-icon {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(218, 112, 214, 0.3);
+        }
+        #user-profile-dropdown {
+            position: absolute;
+            top: 56px;
+            left: 0; 
+            width: 240px;
+            z-index: 50;
+            transform-origin: top left; 
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #FFF;
+            border-bottom-color: var(--color-blob-1); 
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .message-box {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-weight: 500;
+            text-align: center;
+        }
+        .error-box {
+            background: rgba(220, 38, 38, 0.1); 
+            color: #fca5a5; 
+            border: 1px solid rgba(220, 38, 38, 0.3);
+        }
+        .success-box {
+            background: rgba(34, 197, 94, 0.1); 
+            color: #86efac; 
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        
+        [data-page] {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        [data-page].hidden {
+            opacity: 0;
+            transform: scale(0.98);
+            pointer-events: none;
+            position: absolute;
+        }
+    </style>
+</head>
+<body class="min-h-screen w-full flex flex-col items-center justify-center p-4">
+
+    
+    <div class="blob-container">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+    
+    
+    <div id="user-profile" class="hidden"> 
+        <div id="user-profile-icon">
+            <i class="fas fa-user"></i>
+        </div>
+        <div id="user-profile-dropdown" class="glass-ui !p-4 !rounded-lg hidden">
+            <p class="text-sm text-white/70 mb-1">Signed in as</p>
+            <p id="user-email-display" class="text-base font-semibold text-white truncate mb-4"></p>
+            <button id="signout-btn" class="w-full btn-secondary !border-red-500/50 !text-red-400 !py-2">
+                <i class="fas fa-sign-out-alt"></i>
+                Sign Out
+            </button>
+        </div>
+    </div>
+
+    
+    <div id="auth-container" data-page="auth" class="w-full max-w-md">
+        <div class="glass-ui p-8 md:p-10">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-white">
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">DreamScreen</span>.ai
+                </h1>
+                <p class="text-white/70 mt-2">Sign in to create</p>
+            </header>
+
+            <div class="auth-tabs">
+                <div id="tab-login" class="auth-tab active" onclick="showAuthForm('login')">Login</div>
+                <div id="tab-signup" class="auth-tab" onclick="showAuthForm('signup')">Sign Up</div>
+            </div>
+
+            <p id="auth-error" class="message-box error-box hidden mb-4"></p>
+            <p id="auth-success" class="message-box success-box hidden mb-4"></p>
+
+            
+            <form id="login-form" class="flex flex-col space-y-4">
+                <input id="login-email" type="email" class="w-full glass-input" placeholder="Email" required>
+                <input id="login-password" type="password" class="w-full glass-input" placeholder="Password" required>
+                <button type="submit" class="w-full btn-primary">
+                    <span id="login-btn-text">Login</span>
+                    <i id="login-spinner" class="fas fa-spinner fa-spin hidden"></i>
+                </button>
+                <a href="#" id="forgot-password-link" class="auth-link text-center block">Forgot Password?</a>
+            </form>
+
+            
+            <form id="signup-form" class="hidden flex flex-col space-y-4">
+                <input id="signup-email" type="email" class="w-full glass-input" placeholder="Email" required>
+                <input id="signup-password" type="password" class="w-full glass-input" placeholder="Password (min. 6 characters)" required>
+                <button type="submit" class="w-full btn-primary">
+                    <span id="signup-btn-text">Create Account</span>
+                    <i id="signup-spinner" class="fas fa-spinner fa-spin hidden"></i>
+                </button>
+            </form>
+
+            
+            <div class="flex items-center my-6">
+                <hr class="flex-grow border-t border-white/20">
+                <span class="px-4 text-white/50 text-sm font-semibold">OR</span>
+                <hr class="flex-grow border-t border-white/20">
+            </div>
+
+            
+            <button id="google-signin-btn" class="w-full btn-primary btn-google">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google icon" class="mr-2">
+                Sign in with Google
+            </button>
+        </div>
+    </div>
+
+    
+    <div id="app-container" data-page="app" class="hidden w-full max-w-lg md:max-w-3xl relative mt-20 md:mt-20">
+        <div class="glass-ui p-6 md:p-10 rounded-3xl">
+            
+
+            <header class="text-center mb-8 md:mb-10">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-white shadow-sm">
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">DreamScreen</span>.ai
+                </h1>
+                <p class="text-white/70 mt-3 text-lg">Create your perfect wallpaper</p>
+            </header>
+
+            <main>
+                <div id="controls" class="flex flex-col space-y-6">
+                    
+                    
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label for="prompt-input" class="block text-base font-semibold text-white/90">1. Describe your wallpaper</label>
+                            <button id="enhance-btn" class="btn-secondary !py-1.5 !px-3 !text-sm flex items-center">
+                                <i class="fas fa-wand-magic-sparkles"></i>
+                                <span>Enhance</span>
+                            </button>
+                        </div>
+                        <textarea id="prompt-input" rows="3" class="w-full glass-input text-base" placeholder="e.g., A serene Japanese garden with a koi pond and soft morning light..."></textarea>
+                    </div>
+
+                    
+                    <div>
+                        <label class="block text-base font-semibold text-white/90 mb-3">2. Choose an Art Style</label>
+                        <fieldset id="style-select" class="style-tabs-container">
+                            <div class="style-tab flex-auto"><input type="radio" id="style-photorealistic" name="art-style" value="Photorealistic" checked><label for="style-photorealistic">Photorealistic</label></div>
+                            <div class="style-tab flex-auto"><input type="radio" id="style-minimalist" name="art-style" value="Minimalist"><label for="style-minimalist">Minimalist</label></div>
+                            <div class="style-tab flex-auto"><input type="radio" id="style-anime" name="art-style" value="Anime"><label for="style-anime">Anime</label></div>
+                            <div class="style-tab flex-auto"><input type="radio" id="style-fantasy" name="art-style" value="Fantasy Art"><label for="style-fantasy">Fantasy</label></div>
+                            <div class="style-tab flex-auto"><input type="radio" id="style-cyberpunk" name="art-style" value="Cyberpunk"><label for="style-cyberpunk">Cyberpunk</label></div>
+                            <div class="style-tab flex-auto"><input type="radio" id="style-pixel" name="art-style" value="Pixel Art"><label for="style-pixel">Pixel Art</label></div>
+                            <div class="style-tab flex-auto"><input type="radio" id="style-abstract" name="art-style" value="Abstract"><label for="style-abstract">Abstract</label></div>
+                        </fieldset>
+                    </div>
+
+                    
+                    <div>
+                        <label for="device-select" class="block text-base font-semibold text-white/90 mb-2">3. Choose a Device</label>
+                        <select id="device-select" class="w-full glass-input text-base">
+                            <option value="Mobile">Mobile (9:16)</option>
+                            <option value="Laptop/Desktop">Laptop/Desktop (16:9)</option>
+                            <option value="Tablet">Tablet (4:3)</option>
+                            <option value="Ultrawide">Ultrawide (21:9)</option>
+                            <option value="Profile Pic">Profile Pic (1:1)</option>
+                        </select>
+                    </div>
+
+                    
+                    <button id="generate-btn" class="w-full btn-primary mt-4">
+                        Generate Wallpaper <i class="fas fa-wand-magic-sparkles"></i>
+                    </button>
+                </div>
+
+                
+                <div id="display-area" class="mt-8 text-center">
+                    <p id="app-error-msg" class="message-box error-box hidden mb-4"></p>
+                    <p id="app-success-msg" class="message-box success-box hidden mb-4"></p>
+
+                    <div id="loader" class="hidden flex justify-center items-center h-48">
+                        <div class="loader"></div>
+                    </div>
+
+                    <div id="result" class="hidden flex flex-col items-center justify-center space-y-6">
+                        <img id="result-image" src="" alt="Generated Wallpaper" class="w-full max-w-lg rounded-2xl shadow-lg mx-auto border-2 border-white/10">
+                        <a id="download-btn" href="#" download="DreamScreenAI.png" class="btn-secondary inline-flex items-center">
+                            <i class="fas fa-download"></i>
+                            Download Image
+                        </a>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    
+    <div id="verify-email-container" data-page="verify" class="hidden w-full max-w-md">
+        <div class="glass-ui p-8 md:p-10 text-center">
+            <i class="fas fa-envelope-open-text text-5xl text-purple-400 mb-6"></i>
+            <h2 class="text-3xl font-bold mb-4">Verify Your Email</h2>
+            <p class="text-white/80 mb-6">We've sent a verification link to <strong id="verify-email-display" class="text-white"></strong>.</p>
+            <button id="resend-verification-btn" class="w-full btn-primary">Resend Verification Email</button>
+            <button id="verify-logout-btn" class="w-full btn-secondary !border-red-500/50 !text-red-400 !py-2 mt-4">
+                Sign Out
+            </button>
+        </div>
+    </div>
+
+    
+    <div id="forgot-password-container" data-page="forgot" class="hidden w-full max-w-md">
+        <div class="glass-ui p-8 md:p-10">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-white">Forgot Password</h1>
+                <p class="text-white/70 mt-2">Enter your email to get a reset link</p>
+            </header>
+            
+            <p id="forgot-error" class="message-box error-box hidden mb-4"></p>
+            <p id="forgot-success" class="message-box success-box hidden mb-4"></p>
+
+            <form id="forgot-password-form" class="flex flex-col space-y-4">
+                <input id="forgot-email" type="email" class="w-full glass-input" placeholder="Your Email Address" required>
+                <button type="submit" class="w-full btn-primary">
+                    <span id="forgot-btn-text">Send Reset Link</span>
+                    <i id="forgot-spinner" class="fas fa-spinner fa-spin hidden"></i>
+                </button>
+                <a href="#" id="back-to-login-link" class="auth-link text-center block">Back to Login</a>
+            </form>
+        </div>
+    </div>
+
+
+    
+    <script type="module">
+       
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signInWithPopup,
+            GoogleAuthProvider,
+            signOut,
+            sendEmailVerification,
+            sendPasswordResetEmail
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        
+       
+        const firebaseConfig = {
+		REMOVED
+        };
+
+       
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
+
+       
+       
+       
+       
+       
+        const geminiApiKey = "REMOVED";
+        
+        const geminiImageApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${geminiApiKey}`;
+        const geminiEnhanceApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`;
+
+
+       
+        const promptInput = document.getElementById('prompt-input');
+        const deviceSelect = document.getElementById('device-select');
+        const generateBtn = document.getElementById('generate-btn');
+        const enhanceBtn = document.getElementById('enhance-btn');
+        const loader = document.getElementById('loader');
+        const appErrorMsg = document.getElementById('app-error-msg');
+        const appSuccessMsg = document.getElementById('app-success-msg');
+        const resultDiv = document.getElementById('result');
+        const resultImage = document.getElementById('result-image');
+        const downloadBtn = document.getElementById('download-btn');
+        const userProfile = document.getElementById('user-profile');
+        const userProfileIcon = document.getElementById('user-profile-icon');
+        const userProfileDropdown = document.getElementById('user-profile-dropdown');
+        const userEmailDisplay = document.getElementById('user-email-display');
+        const signoutBtn = document.getElementById('signout-btn');
+
+       
+        const authContainer = document.getElementById('auth-container');
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const loginEmail = document.getElementById('login-email');
+        const loginPassword = document.getElementById('login-password');
+        const signupEmail = document.getElementById('signup-email');
+        const signupPassword = document.getElementById('signup-password');
+        const googleSigninBtn = document.getElementById('google-signin-btn');
+        const authError = document.getElementById('auth-error');
+        const authSuccess = document.getElementById('auth-success');
+        const forgotPasswordLink = document.getElementById('forgot-password-link');
+
+       
+        const appContainer = document.getElementById('app-container');
+        const verifyEmailContainer = document.getElementById('verify-email-container');
+        const forgotPasswordContainer = document.getElementById('forgot-password-container');
+        const verifyEmailDisplay = document.getElementById('verify-email-display');
+        const resendVerificationBtn = document.getElementById('resend-verification-btn');
+        const verifyLogoutBtn = document.getElementById('verify-logout-btn');
+        const forgotPasswordForm = document.getElementById('forgot-password-form');
+        const forgotEmail = document.getElementById('forgot-email');
+        const backToLoginLink = document.getElementById('back-to-login-link');
+        const forgotError = document.getElementById('forgot-error');
+        const forgotSuccess = document.getElementById('forgot-success');
+
+
+       
+        const pages = document.querySelectorAll('[data-page]');
+        function showPage(pageId) {
+            pages.forEach(page => {
+                if (page.id === pageId) {
+                    page.classList.remove('hidden');
+                } else {
+                    page.classList.add('hidden');
+                }
+            });
+           
+            authError.classList.add('hidden');
+            authSuccess.classList.add('hidden');
+            forgotError.classList.add('hidden');
+            forgotSuccess.classList.add('hidden');
+        }
+
+       
+        window.showAuthForm = (formName) => {
+            const loginTab = document.getElementById('tab-login');
+            const signupTab = document.getElementById('tab-signup');
+            if (formName === 'login') {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                loginTab.classList.add('active');
+                signupTab.classList.remove('active');
+            } else {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                loginTab.classList.remove('active');
+                signupTab.classList.add('active');
+            }
+            authError.classList.add('hidden');
+        }
+
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage('forgot-password-container');
+        });
+
+        backToLoginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage('auth-container');
+        });
+
+       
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                if (user.emailVerified) {
+                   
+                    showPage('app-container');
+                    userEmailDisplay.textContent = user.email;
+                   
+                    const userInitial = user.email ? user.email[0].toUpperCase() : 'U';
+                    userProfileIcon.innerHTML = user.photoURL ? `<img src="${user.photoURL}" class="w-full h-full rounded-full" alt="Profile Photo">` : userInitial;
+                    userProfile.classList.remove('hidden');
+                } else {
+                   
+                    showPage('verify-email-container');
+                    verifyEmailDisplay.textContent = user.email;
+                }
+            } else {
+               
+                showPage('auth-container');
+                userProfile.classList.add('hidden');
+            }
+        });
+
+       
+
+       
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = signupEmail.value;
+            const password = signupPassword.value;
+            setAuthLoading('signup', true);
+            authError.classList.add('hidden');
+            authSuccess.classList.add('hidden');
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await sendEmailVerification(userCredential.user);
+                authSuccess.textContent = 'Success! Please check your email to verify your account.';
+                authSuccess.classList.remove('hidden');
+                signupForm.reset();
+            } catch (error) {
+                showAuthError(error.message);
+            } finally {
+                setAuthLoading('signup', false);
+            }
+        });
+
+       
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = loginEmail.value;
+            const password = loginPassword.value;
+            setAuthLoading('login', true);
+            authError.classList.add('hidden');
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+               
+            } catch (error) {
+                showAuthError(error.message);
+            } finally {
+                setAuthLoading('login', false);
+            }
+        });
+        
+       
+        googleSigninBtn.addEventListener('click', async () => {
+            authError.classList.add('hidden');
+            try {
+                await signInWithPopup(auth, googleProvider);
+               
+            } catch (error) {
+                showAuthError(error.message);
+            }
+        });
+
+       
+        signoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+               
+            } catch (error) {
+                showAppError(error.message);
+            }
+        });
+        verifyLogoutBtn.addEventListener('click', () => signoutBtn.click());
+
+       
+        resendVerificationBtn.addEventListener('click', async () => {
+            resendVerificationBtn.disabled = true;
+            resendVerificationBtn.textContent = 'Sending...';
+            try {
+                await sendEmailVerification(auth.currentUser);
+                alert('Verification email sent! Please check your inbox.');
+            } catch (error) {
+                alert(`Error sending email: ${error.message}`);
+            } finally {
+                resendVerificationBtn.disabled = false;
+                resendVerificationBtn.textContent = 'Resend Verification Email';
+            }
+        });
+        
+       
+        forgotPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = forgotEmail.value;
+            setAuthLoading('forgot', true);
+            forgotError.classList.add('hidden');
+            forgotSuccess.classList.add('hidden');
+            
+            try {
+                await sendPasswordResetEmail(auth, email);
+                forgotSuccess.textContent = 'Success! Check your email for a password reset link.';
+                forgotSuccess.classList.remove('hidden');
+                forgotPasswordForm.reset();
+            } catch (error) {
+                forgotError.textContent = error.message;
+                forgotError.classList.remove('hidden');
+            } finally {
+                setAuthLoading('forgot', false);
+            }
+        });
+
+       
+        userProfileIcon.addEventListener('click', () => {
+            userProfileDropdown.classList.toggle('hidden');
+        });
+       
+        document.addEventListener('click', (e) => {
+            if (!userProfile.contains(e.target)) {
+                userProfileDropdown.classList.add('hidden');
+            }
+        });
+
+       
+        function showAuthError(message) {
+            authError.textContent = formatFirebaseError(message);
+            authError.classList.remove('hidden');
+        }
+        
+        function setAuthLoading(form, isLoading) {
+            const btnText = document.getElementById(`${form}-btn-text`);
+            const spinner = document.getElementById(`${form}-spinner`);
+            const button = btnText.parentElement;
+            
+            if (isLoading) {
+                btnText.classList.add('hidden');
+                spinner.classList.remove('hidden');
+                button.disabled = true;
+            } else {
+                btnText.classList.remove('hidden');
+                spinner.classList.add('hidden');
+                button.disabled = false;
+            }
+        }
+        
+        function formatFirebaseError(errorMsg) {
+            const code = errorMsg.match(/auth\/([\w-]+)/);
+            if (code) {
+                switch (code[1]) {
+                    case 'invalid-email':
+                        return 'Please enter a valid email address.';
+                    case 'user-not-found':
+                    case 'wrong-password':
+                        return 'Invalid email or password. Please try again.';
+                    case 'email-already-in-use':
+                        return 'This email is already in use. Please login or use a different email.';
+                    case 'weak-password':
+                        return 'Password is too weak. Please use at least 6 characters.';
+                    case 'too-many-requests':
+                        return 'Too many requests. Please try again later.';
+                    default:
+                        return `Error: ${code[1]}`;
+                }
+            }
+            return errorMsg;
+        }
+
+       
+        generateBtn.addEventListener('click', () => {
+            const prompt = promptInput.value;
+            const style = document.querySelector('input[name="art-style"]:checked').value;
+            const device = deviceSelect.value;
+
+            if (!prompt) {
+                showAppError("Please enter a description for your wallpaper.");
+                return;
+            }
+            generateWallpaper(prompt, style, device);
+        });
+
+        enhanceBtn.addEventListener('click', async () => {
+            const currentPrompt = promptInput.value.trim();
+            if (!currentPrompt) {
+                showAppError("Please enter a prompt first before enhancing it.");
+                return;
+            }
+            await enhancePrompt(currentPrompt);
+        });
+        
+        function showLoading() {
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Generating...';
+            loader.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
+            appErrorMsg.classList.add('hidden');
+            appSuccessMsg.classList.add('hidden');
+        }
+
+        function hideLoading() {
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = 'Generate Wallpaper <i class="fas fa-wand-magic-sparkles"></i>';
+            loader.classList.add('hidden');
+        }
+
+        function showAppError(message) {
+            appErrorMsg.textContent = message;
+            appErrorMsg.classList.remove('hidden', 'success-box');
+            appErrorMsg.classList.add('error-box');
+            resultDiv.classList.add('hidden');
+        }
+
+        function showAppSuccess(message) {
+            appSuccessMsg.textContent = message;
+            appSuccessMsg.classList.remove('hidden', 'error-box');
+            appSuccessMsg.classList.add('success-box');
+            resultDiv.classList.add('hidden');
+        }
+
+        function showResult(imageUrl) {
+            resultImage.src = imageUrl;
+            downloadBtn.href = imageUrl;
+            resultDiv.classList.remove('hidden');
+            appErrorMsg.classList.add('hidden');
+            appSuccessMsg.classList.add('hidden');
+        }
+
+        async function fetchWithBackoff(url, options, retries = 3, delay = 1000) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    if (response.status === 429 && retries > 0) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        return fetchWithBackoff(url, options, retries - 1, delay * 2);
+                    }
+                    const errorData = await response.json();
+                    throw new Error(`HTTP error! status: ${response.status} - ${errorData.error.message}`);
+                }
+                return await response.json();
+            } catch (error) {
+                if (retries > 0 && !(error.message.startsWith("HTTP error!"))) {
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return fetchWithBackoff(url, options, retries - 1, delay * 2);
+                }
+                throw error;
+            }
+        }
+
+        async function enhancePrompt(originalPrompt) {
+            const originalText = enhanceBtn.innerHTML;
+            enhanceBtn.disabled = true;
+            enhanceBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Enhancing...</span>';
+            appErrorMsg.classList.add('hidden');
+
+            const enhancementInstructions = `
+You are a professional prompt engineer specializing in creating detailed, vivid prompts for AI image generation.
+Your task is to enhance the following user prompt for generating a high-quality wallpaper image.
+The enhanced prompt should be:
+1.  **More detailed and descriptive** - Add specific visual details, colors, lighting, atmosphere, and composition elements.
+2.  **Artistically rich** - Include descriptions of textures, depth, perspective, and artistic elements.
+3.  **Visually compelling** - Add information about mood, emotion, and visual impact.
+4.  **Professional quality** - Use art and photography terminology where appropriate.
+5.  **Concise but comprehensive** - Keep it readable but pack it with visual information.
+
+Original user prompt: "${originalPrompt}"
+
+Provide ONLY the enhanced prompt text. Do not include any explanations, prefixes, or meta-commentary. Just return the enhanced prompt.
+`;
+            const payload = {
+                contents: [{ parts: [{ text: enhancementInstructions }] }],
+                generationConfig: { temperature: 0.8, topK: 40, topP: 0.95, maxOutputTokens: 1024 },
+            };
+            const fetchOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            };
+
+            try {
+                const result = await fetchWithBackoff(geminiEnhanceApiUrl, fetchOptions);
+                const enhancedText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!enhancedText) {
+                    throw new Error('No enhanced prompt received from API.');
+                }
+                const cleanedPrompt = enhancedText.trim().replace(/^```[\w]*\n?/g, '').replace(/```$/g, '').trim();
+                promptInput.value = cleanedPrompt;
+                showAppSuccess('Prompt enhanced successfully!');
+                setTimeout(() => appSuccessMsg.classList.add('hidden'), 3000);
+            } catch (error) {
+                console.error("Error enhancing prompt:", error);
+                showAppError(`Enhancement failed: ${error.message}`);
+            } finally {
+                enhanceBtn.disabled = false;
+                enhanceBtn.innerHTML = originalText;
+            }
+        }
+
+        async function generateWallpaper(prompt, style, device) {
+            showLoading();
+
+            let aspectRatioInstruction;
+            switch (device) {
+                case 'Profile Pic':
+                    aspectRatioInstruction = "a square 1:1 aspect ratio, perfect for a profile picture.";
+                    break;
+                case 'Mobile':
+                    aspectRatioInstruction = "a vertical 9:16 aspect ratio.";
+                    break;
+                case 'Laptop/Desktop':
+                    aspectRatioInstruction = "a horizontal 16:9 aspect ratio.";
+                    break;
+                case 'Tablet':
+                    aspectRatioInstruction = "a 4:3 aspect ratio.";
+                    break;
+                case 'Ultrawide':
+                    aspectRatioInstruction = "a horizontal 21:9 aspect ratio.";
+                    break;
+                default:
+                    aspectRatioInstruction = "a horizontal 16:9 aspect ratio.";
+            }
+
+            const finalPrompt = `
+                Generate a high-resolution wallpaper.
+                **Instructions:**
+                1.  **Device/Aspect Ratio:** ${device}. The image MUST match ${aspectRatioInstruction}
+                2.  **Art Style:** ${style} (follow this strictly!!).
+                3.  **Description:** ${prompt}.
+                Please adhere strictly to the requested aspect ratio. The image should be beautiful, high-quality, and suitable as a background.
+            `;
+
+           
+           
+           
+            
+            const payload = {
+                contents: [{ parts: [{ text: finalPrompt }] }],
+                generationConfig: {
+                    responseModalities: ['TEXT', 'IMAGE']
+                },
+            };
+            const fetchOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            };
+            try {
+                const result = await fetchWithBackoff(geminiImageApiUrl, fetchOptions);
+                
+                const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+
+                if (!base64Data) {
+                    const textResponse = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    const safetyReason = result?.candidates?.[0]?.safetyRatings?.[0]?.category;
+                    
+                    if (safetyReason) {
+                        throw new Error(`Image generation blocked due to safety concerns (${safetyReason}).`);
+                    } else if (textResponse) {
+                        throw new Error(`Model responded with text instead of image: ${textResponse}`);
+                    } else {
+                        throw new Error('No image data received from API. The prompt may have been unsafe or invalid.');
+                    }
+                }
+
+                const imageUrl = `data:image/png;base64,${base64Data}`;
+                showResult(imageUrl);
+            } catch (error) {
+                console.error("Error generating wallpaper:", error);
+                showAppError(`Generation failed: ${error.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+    </script>
+    
+    <footer class="w-full text-center text-white/50 text-xs mt-8">
+        © DreamScreen.ai | All rights reserved
+    </footer>
+</body>
+</html>
